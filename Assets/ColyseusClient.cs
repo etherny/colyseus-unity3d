@@ -87,7 +87,6 @@ public class ColyseusClient : MonoBehaviour {
 
 			room.State.players.OnAdd += OnPlayerAdd;
 			room.State.players.OnRemove += OnPlayerRemove;
-			room.State.players.OnChange += OnPlayerMove;
 
 			PlayerPrefs.SetString("sessionId", room.SessionId);
 			PlayerPrefs.Save();
@@ -119,7 +118,6 @@ public class ColyseusClient : MonoBehaviour {
 
 			room.State.players.OnAdd += OnPlayerAdd;
 			room.State.players.OnRemove += OnPlayerRemove;
-			room.State.players.OnChange += OnPlayerMove;
 		};
 
 		room.OnStateChange += OnStateChangeHandler;
@@ -167,9 +165,13 @@ public class ColyseusClient : MonoBehaviour {
 	{
 		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
-		Debug.Log("Player add! x => " + item.Value.x + ", y => " + item.Value.y);
+		item.Value.camp.position.OnChange += (object sender2, OnChangeEventArgs e) =>
+		{
+			cube.transform.position = new Vector3(item.Value.camp.position.x, item.Value.camp.position.y, item.Value.camp.position.z);
+			Debug.Log("x: " + cube.transform.position.x + ", y: " + cube.transform.position.y + ", z: " + cube.transform.position.z);
+		};
 
-		cube.transform.position = new Vector3(item.Value.x, item.Value.y, 0);
+		cube.transform.position = new Vector3(item.Value.camp.position.x, item.Value.camp.position.y, item.Value.camp.position.z);
 
 		// add "player" to map of players
 		players.Add(item.Value, cube);
@@ -182,17 +184,6 @@ public class ColyseusClient : MonoBehaviour {
 		Destroy(cube);
 
 		players.Remove(item.Value);
-	}
-
-
-	void OnPlayerMove (object sender, KeyValueEventArgs<Player, string> item)
-	{
-		GameObject cube;
-		players.TryGetValue (item.Value, out cube);
-
-		Debug.Log(item.Value.x);
-
-		cube.transform.Translate (new Vector3 (item.Value.x, item.Value.y, 0));
 	}
 
 	void OnApplicationQuit()

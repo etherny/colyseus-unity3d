@@ -6,8 +6,11 @@
 using Colyseus.Schema;
 
 public class Player : Schema {
-	[Type("ref", typeof(Camp))]
-	public Camp camp = new Camp();
+	[Type("number")]
+	public float x = 0;
+
+	[Type("number")]
+	public float y = 0;
 
 	[Type("boolean")]
 	public bool connected = false;
